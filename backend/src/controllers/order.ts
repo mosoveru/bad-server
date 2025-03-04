@@ -5,6 +5,7 @@ import NotFoundError from '../errors/not-found-error'
 import Order, { IOrder } from '../models/order'
 import Product, { IProduct } from '../models/product'
 import User from '../models/user'
+import {normalizeLimit, normalizePage} from "../utils/normalize";
 
 // eslint-disable-next-line max-len
 // GET /orders?page=2&limit=5&sort=totalAmount&order=desc&orderDateFrom=2024-07-01&orderDateTo=2024-08-01&status=delivering&totalAmountFrom=100&totalAmountTo=1000&search=%2B1
@@ -16,8 +17,6 @@ export const getOrders = async (
 ) => {
     try {
         const {
-            page = 1,
-            limit = 10,
             sortField = 'createdAt',
             sortOrder = 'desc',
             status,
@@ -27,6 +26,9 @@ export const getOrders = async (
             orderDateTo,
             search,
         } = req.query
+        
+        const limit = normalizeLimit(req.query.limit);
+        const page = normalizePage(req.query.page);
 
         const filters: FilterQuery<Partial<IOrder>> = {}
 
@@ -156,7 +158,9 @@ export const getOrdersCurrentUser = async (
 ) => {
     try {
         const userId = res.locals.user._id
-        const { search, page = 1, limit = 5 } = req.query
+        const { search, page = 1 } = req.query
+        const limit = Number(req.query.limit) > 5 ? 5 : req.query.limit;
+        
         const options = {
             skip: (Number(page) - 1) * Number(limit),
             limit: Number(limit),
@@ -289,7 +293,7 @@ export const createOrder = async (
 ) => {
     try {
         const basket: IProduct[] = []
-        const products = await Product.find<IProduct>({})
+        const products = await Product.find({})
         const userId = res.locals.user._id
         const { address, payment, phone, total, email, items, comment } =
             req.body
