@@ -15,7 +15,6 @@ export const getCustomers = async (
     try {
         const {
             page = 1,
-            limit = 10,
             sortField = 'createdAt',
             sortOrder = 'desc',
             registrationDateFrom,
@@ -29,6 +28,8 @@ export const getCustomers = async (
             search,
         } = req.query
 
+        const limit = Number(req.query.limit) > 10 ? 10 : req.query.limit;
+        
         const filters: FilterQuery<Partial<IUser>> = {}
 
         if (registrationDateFrom) {
