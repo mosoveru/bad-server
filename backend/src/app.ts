@@ -5,6 +5,7 @@ import 'dotenv/config'
 import express, { json, urlencoded } from 'express'
 import mongoose from 'mongoose'
 import path from 'path'
+import expressMongoSanitize from "express-mongo-sanitize";
 import { DB_ADDRESS } from './config'
 import errorHandler from './middlewares/error-handler'
 import serveStatic from './middlewares/serverStatic'
@@ -25,6 +26,7 @@ app.use(urlencoded({ extended: true }))
 app.use(json())
 
 app.options('*', cors())
+app.use(expressMongoSanitize())
 app.use(routes)
 app.use(errors())
 app.use(errorHandler)
