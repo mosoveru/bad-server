@@ -3,6 +3,7 @@ import { FilterQuery } from 'mongoose'
 import NotFoundError from '../errors/not-found-error'
 import Order from '../models/order'
 import User, { IUser } from '../models/user'
+import {normalizeLimit, normalizePage} from "../utils/normalize";
 
 // TODO: Добавить guard admin
 // eslint-disable-next-line max-len
@@ -14,7 +15,6 @@ export const getCustomers = async (
 ) => {
     try {
         const {
-            page = 1,
             sortField = 'createdAt',
             sortOrder = 'desc',
             registrationDateFrom,
@@ -28,7 +28,8 @@ export const getCustomers = async (
             search,
         } = req.query
 
-        const limit = Number(req.query.limit) > 10 ? 10 : req.query.limit;
+        const limit = normalizeLimit(req.query.limit);
+        const page = normalizePage(req.query.page);
         
         const filters: FilterQuery<Partial<IUser>> = {}
 

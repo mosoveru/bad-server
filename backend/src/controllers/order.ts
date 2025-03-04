@@ -5,6 +5,7 @@ import NotFoundError from '../errors/not-found-error'
 import Order, { IOrder } from '../models/order'
 import Product, { IProduct } from '../models/product'
 import User from '../models/user'
+import {normalizeLimit, normalizePage} from "../utils/normalize";
 
 // eslint-disable-next-line max-len
 // GET /orders?page=2&limit=5&sort=totalAmount&order=desc&orderDateFrom=2024-07-01&orderDateTo=2024-08-01&status=delivering&totalAmountFrom=100&totalAmountTo=1000&search=%2B1
@@ -16,7 +17,6 @@ export const getOrders = async (
 ) => {
     try {
         const {
-            page = 1,
             sortField = 'createdAt',
             sortOrder = 'desc',
             status,
@@ -27,7 +27,8 @@ export const getOrders = async (
             search,
         } = req.query
         
-        const limit = Number(req.query.limit) > 10 ? 10 : req.query.limit;
+        const limit = normalizeLimit(req.query.limit);
+        const page = normalizePage(req.query.page);
 
         const filters: FilterQuery<Partial<IOrder>> = {}
 
