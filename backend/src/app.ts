@@ -7,6 +7,7 @@ import mongoose from 'mongoose'
 import path from 'path'
 import expressMongoSanitize from "express-mongo-sanitize";
 import * as process from "node:process";
+import rateLimit from "express-rate-limit";
 import { DB_ADDRESS } from './config'
 import errorHandler from './middlewares/error-handler'
 import serveStatic from './middlewares/serverStatic'
@@ -14,6 +15,15 @@ import routes from './routes'
 
 const { PORT = 3000 } = process.env
 const app = express()
+
+const limiter = rateLimit({
+    windowMs: 1000 * 60 * 15,
+    limit: 25,
+    standardHeaders: true,
+    legacyHeaders: false
+})
+
+app.use(limiter)
 
 app.use(cookieParser())
 
