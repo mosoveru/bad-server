@@ -8,6 +8,7 @@ export interface IFile {
 }
 
 export interface IProduct extends Document {
+    _id: mongoose.Types.ObjectId
     title: string
     image: IFile
     category: string
