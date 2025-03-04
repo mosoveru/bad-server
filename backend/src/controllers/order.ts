@@ -289,7 +289,7 @@ export const createOrder = async (
 ) => {
     try {
         const basket: IProduct[] = []
-        const products = await Product.find<IProduct>({})
+        const products = await Product.find({})
         const userId = res.locals.user._id
         const { address, payment, phone, total, email, items, comment } =
             req.body
